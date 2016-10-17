@@ -16,6 +16,24 @@ ActiveRecord::Schema.define(version: 20161011063315) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
+  create_table "chat_room_users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid "user_id",      null: false
+    t.uuid "chat_room_id", null: false
+    t.index ["chat_room_id"], name: "index_chat_room_users_on_chat_room_id", using: :btree
+    t.index ["user_id"], name: "index_chat_room_users_on_user_id", using: :btree
+  end
+
+  create_table "chat_rooms", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.index ["user_id"], name: "index_chat_rooms_on_user_id", using: :btree
+  end
+
+  create_table "messages", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.text "content", null: false
+    t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
+  end
+
   create_table "users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.boolean  "admin",           default: false, null: false
     t.string   "email",                           null: false
